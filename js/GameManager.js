@@ -274,9 +274,9 @@ class GameManager {
         const playerRect = this.playerController.getRect();
 
         // Add fairness buffer. 
-        // Since the car is now 220px tall, we trim the visual rect to maintain fair gameplay.
-        const hitboxTrimY = 45; // Trim 45px off the visual front and back bounds
-        const hitboxTrimX = 15; // Horizontal leniency
+        // The car is drawn in fake 3D. The "real" hitbox should be strictly the front bumper.
+        const hitboxTrimY = 65; // Massive trim: ignore the hood and shadow. Only care about the front tires area.
+        const hitboxTrimX = 25; // Significant horizontal leniency to allow tight lane swaps.
 
         const pLeft = playerRect.left + hitboxTrimX;
         const pRight = playerRect.right - hitboxTrimX;
@@ -285,17 +285,26 @@ class GameManager {
 
         for (let i = this.obstacleSpawner.obstacles.length - 1; i >= 0; i--) {
             let obs = this.obstacleSpawner.obstacles[i];
-            const obsRect = obs.element.getBoundingClientRect();
 
-            const oLeft = obsRect.left + this.collisionMargin;
-            const oRight = obsRect.right - this.collisionMargin;
-            const oTop = obsRect.top + this.collisionMargin;
-            const oBottom = obsRect.bottom - this.collisionMargin;
+            // Get computed style to ensure moving obstacles track their exact mid-transition visual position
+            const computedStyle = window.getComputedStyle(obs.element);
+            const matrix = new DOMMatrix(computedStyle.transform);
+            const leftOffset = parseFloat(computedStyle.left) || 0;
+            const topOffset = parseFloat(computedStyle.top) || 0;
+
+            // Reconstruct the true visual bounding box based on width/height and transform
+            const width = obs.element.offsetWidth || 50;
+            const height = obs.element.offsetHeight || 50;
+
+            const oLeft = leftOffset + matrix.m41 + this.collisionMargin;
+            const oRight = oLeft + width - (this.collisionMargin * 2);
+            const oTop = topOffset + matrix.m42 + this.collisionMargin;
+            const oBottom = oTop + height - (this.collisionMargin * 2);
 
             // True 2D Bounding Box Intersection
             if (pLeft < oRight && pRight > oLeft && pTop < oBottom && pBottom > oTop) {
                 if (this.debugLogging) {
-                    console.log(`[COLLISION] Hit! Obs Type: ${obs.type}, Bounds: L:${pLeft} R:${pRight} T:${pTop} B:${pBottom}`);
+                    console.log(`[COLLISION] Hit! Obs Type: ${obs.type}`);
                 }
 
                 if (obs.type === 'oil') {

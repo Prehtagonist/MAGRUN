@@ -216,6 +216,7 @@ class ObstacleSpawner {
 
                     obs.laneIndex = newLane;
                     const nx = this.lanes.getLanePosition(newLane);
+                    obs.element.style.transition = 'left 0.3s ease-in-out'; // Add glide animation
                     obs.element.style.left = `${nx}px`;
 
                     if (this.gameManager.debugLogging) {
