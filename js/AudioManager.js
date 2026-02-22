@@ -12,6 +12,10 @@ class AudioManager {
         this.bgAudioElement = null;
         this.bgAudioFadeInterval = null;
 
+        this.gameplayAudioElement = null;
+        this.isGameplayMusicPlaying = false;
+        this.gameplayAudioFadeInterval = null;
+
         // Playlist setup
         this.playlist = [
             'assets/audio/background-music.mp3',
@@ -27,10 +31,11 @@ class AudioManager {
         if (!this.musicEnabled) {
             this.stopMusicNodes();
             this.pauseBackgroundMusic();
+            this.pauseGameplayMusic();
         } else if (this.initialized) {
             // Restart base ambience if on and wasn't playing
             if (!this.baseOscillator) this.startBaseAmbience();
-            if (!this.isMusicPlaying) this.playBackgroundMusic();
+            if (!this.isMusicPlaying && !this.isGameplayMusicPlaying) this.playBackgroundMusic();
         }
     }
 
@@ -78,6 +83,11 @@ class AudioManager {
         this.bgAudioElement.addEventListener('ended', () => {
             this.playNextTrack();
         });
+
+        this.gameplayAudioElement = new Audio();
+        this.gameplayAudioElement.src = 'assets/audio/gameplay-music.mp3';
+        this.gameplayAudioElement.loop = true;
+        this.gameplayAudioElement.volume = 0;
     }
 
     playNextTrack() {
@@ -103,7 +113,7 @@ class AudioManager {
 
         this.isMusicPlaying = true;
         this.bgAudioElement.play().then(() => {
-            this.fadeMusicVolume(0.6, 1.5);
+            this.fadeMusicVolume(this.bgAudioElement, 0.6, 1.5);
         }).catch(e => {
             console.warn("Autoplay blocked or file not found.", e);
             this.isMusicPlaying = false;
@@ -114,31 +124,57 @@ class AudioManager {
         if (!this.isMusicPlaying || !this.bgAudioElement) return;
 
         this.isMusicPlaying = false;
-        this.fadeMusicVolume(0, 0.5, () => {
+        this.fadeMusicVolume(this.bgAudioElement, 0, 0.5, () => {
             if (!this.isMusicPlaying) {
                 this.bgAudioElement.pause();
             }
         });
     }
 
-    setMusicVolume(level) {
-        if (!this.bgAudioElement || !this.isMusicPlaying || !this.musicEnabled) return;
-        this.fadeMusicVolume(level, 1.0);
+    playGameplayMusic() {
+        if (!this.musicEnabled || !this.gameplayAudioElement || this.isGameplayMusicPlaying) return;
+
+        this.isGameplayMusicPlaying = true;
+        this.gameplayAudioElement.play().then(() => {
+            this.fadeMusicVolume(this.gameplayAudioElement, 0.8, 1.5);
+        }).catch(e => {
+            console.warn("Gameplay music blocked or missing (assets/audio/gameplay-music.mp3)", e);
+            this.isGameplayMusicPlaying = false;
+        });
     }
 
-    fadeMusicVolume(targetVolume, duration, onComplete = null) {
-        if (!this.bgAudioElement) return;
+    pauseGameplayMusic() {
+        if (!this.isGameplayMusicPlaying || !this.gameplayAudioElement) return;
 
-        if (this.bgAudioFadeInterval) {
-            clearInterval(this.bgAudioFadeInterval);
+        this.isGameplayMusicPlaying = false;
+        this.fadeMusicVolume(this.gameplayAudioElement, 0, 0.5, () => {
+            if (!this.isGameplayMusicPlaying) {
+                this.gameplayAudioElement.pause();
+                this.gameplayAudioElement.currentTime = 0; // Rewind for next run
+            }
+        });
+    }
+
+    setMusicVolume(level) {
+        if (!this.musicEnabled) return;
+        if (this.isMusicPlaying && this.bgAudioElement) this.fadeMusicVolume(this.bgAudioElement, level, 1.0);
+        if (this.isGameplayMusicPlaying && this.gameplayAudioElement) this.fadeMusicVolume(this.gameplayAudioElement, level, 1.0);
+    }
+
+    fadeMusicVolume(audioElement, targetVolume, duration, onComplete = null) {
+        if (!audioElement) return;
+
+        // Custom property to hold the active interval per element
+        if (audioElement._fadeInterval) {
+            clearInterval(audioElement._fadeInterval);
         }
 
-        const startVolume = this.bgAudioElement.volume;
+        const startVolume = audioElement.volume;
         const volumeChange = targetVolume - startVolume;
 
         // Ensure duration is safe
         if (duration <= 0) {
-            this.bgAudioElement.volume = targetVolume;
+            audioElement.volume = targetVolume;
             if (onComplete) onComplete();
             return;
         }
@@ -149,18 +185,18 @@ class AudioManager {
 
         let currentTick = 0;
 
-        this.bgAudioFadeInterval = setInterval(() => {
+        audioElement._fadeInterval = setInterval(() => {
             currentTick++;
             let newVol = startVolume + (volumeStep * currentTick);
 
             if (newVol > 1) newVol = 1;
             if (newVol < 0) newVol = 0;
 
-            this.bgAudioElement.volume = newVol;
+            audioElement.volume = newVol;
 
             if (currentTick >= ticks) {
-                clearInterval(this.bgAudioFadeInterval);
-                this.bgAudioElement.volume = targetVolume;
+                clearInterval(audioElement._fadeInterval);
+                audioElement.volume = targetVolume;
                 if (onComplete) onComplete();
             }
         }, stepTime);
@@ -337,12 +373,13 @@ class AudioManager {
 
     reset() {
         this.stopAll();
-        // Since reset implies total game reset, we should just ensure music is at full volume
+        // Return to standard background music
         if (this.initialized && this.musicEnabled) {
             this.startBaseAmbience();
-            this.setMusicVolume(0.6);
+            this.pauseGameplayMusic();
             if (!this.isMusicPlaying) {
                 this.playBackgroundMusic();
+                this.setMusicVolume(0.6);
             }
         }
     }

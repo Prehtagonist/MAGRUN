@@ -146,6 +146,11 @@ class GameManager {
         this.pressureManager.reset();
         this.cinematicManager.reset();
         this.audioManager.reset();
+
+        // Trigger gameplay music crossover
+        this.audioManager.pauseBackgroundMusic();
+        this.audioManager.playGameplayMusic();
+
         this.obstacleSpawner.start();
 
         this.lastFrameTime = performance.now();

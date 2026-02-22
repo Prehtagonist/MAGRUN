@@ -190,7 +190,7 @@ class MagnitudeManager {
             redOpacity = (this.currentMagnitude - 4) * 0.08;
         }
 
-        let darknessOpacity = this.currentMagnitude * 0.06;
+        let darknessOpacity = this.currentMagnitude * 0.03;
 
         this.redOverlay.style.background = `rgba(255, 0, 0, ${redOpacity})`;
         const darkOverlay = document.getElementById('dark-overlay');
@@ -212,7 +212,7 @@ class MagnitudeManager {
             }
         }
 
-        if (this.currentMagnitude >= 8) {
+        if (this.currentMagnitude >= 7) {
             this.vignetteOverlay.style.boxShadow = `inset 0 0 150px rgba(0,0,0,0.9)`;
             this.gameContainer.style.filter = "saturate(1.2) contrast(1.1) blur(0.5px)";
         } else {
