@@ -49,22 +49,13 @@ class MenuManager {
             }
         });
 
-        if (this.lbBtn) {
-            this.lbBtn.addEventListener('click', () => {
+        if (this.leadBtn) {
+            this.leadBtn.addEventListener('click', () => {
                 if (this.gameManager.leaderboardManager) {
                     this.gameManager.leaderboardManager.show();
                 }
             });
         }
-
-        // Other buttons can trigger simple popups or effects for now
-        [this.leadBtn].forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Future functionality
-                btn.classList.add('btn-pop');
-                setTimeout(() => btn.classList.remove('btn-pop'), 200);
-            });
-        });
     }
 
     showMenu() {

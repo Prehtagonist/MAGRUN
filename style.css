@@ -1480,8 +1480,322 @@ input:checked+.slider:before {
 }
 
 /* ----------------------------------------------------- */
-/* LEADERBOARD RECORD HIGHLIGHTS */
+/* LEADERBOARD OVERHAUL & HIGHLIGHTS */
 /* ----------------------------------------------------- */
+
+.leaderboard-modal {
+    width: 90%;
+    max-width: 600px;
+    /* Wider for new layout */
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Stats Summary */
+.lb-stats-summary {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(20, 10, 5, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ff3c00;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 10px;
+    color: #ffaa00;
+    text-shadow: 0 0 5px #ffaa00;
+}
+
+.stat-val {
+    font-size: 18px;
+    color: #fff;
+    font-family: 'Righteous', 'Arial Black', sans-serif;
+}
+
+.highlight-stat .stat-label {
+    color: #00ffcc;
+    text-shadow: 0 0 5px #00ffcc;
+}
+
+.highlight-stat .stat-val {
+    color: #00ffcc;
+}
+
+/* Sorting Filters */
+.lb-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.lb-sort-btn {
+    background: #222;
+    border: 1px solid #555;
+    color: #888;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Arial Black', sans-serif;
+    transition: all 0.3s;
+}
+
+.lb-sort-btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+.lb-sort-btn.active {
+    background: rgba(255, 60, 0, 0.2);
+    border-color: #ff3c00;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 60, 0, 0.5);
+    transform: scale(1.05);
+}
+
+/* Table Header */
+.lb-table-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background: #111;
+    border-bottom: 2px solid #555;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.header-rank {
+    width: 15%;
+    text-align: left;
+}
+
+.header-name {
+    width: 45%;
+    text-align: left;
+}
+
+.header-score {
+    width: 20%;
+    text-align: right;
+}
+
+.header-mag {
+    width: 20%;
+    text-align: right;
+}
+
+/* Leaderboard List Layout overridden */
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border-left: 4px solid transparent;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: rowEnter 0.5s ease-out forwards;
+}
+
+@keyframes rowEnter {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.leaderboard-item .lb-rank {
+    width: 15%;
+    text-align: left;
+    font-size: 18px;
+    color: #888;
+}
+
+.leaderboard-item .lb-name {
+    width: 45%;
+    text-align: left;
+    font-size: 18px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaderboard-item .lb-score {
+    width: 20%;
+    text-align: right;
+    font-size: 18px;
+    color: #ffaa00;
+}
+
+.leaderboard-item .lb-mag {
+    width: 20%;
+    text-align: right;
+    font-size: 14px;
+    color: #ccc;
+}
+
+/* TOP 3 STYLING */
+.rank-1 {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+    border-left: 4px solid #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    animation: goldPulse 2s infinite alternate;
+}
+
+.rank-1 .lb-rank,
+.rank-1 .lb-name,
+.rank-1 .lb-score {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+@keyframes goldPulse {
+    from {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    to {
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+    }
+}
+
+.rank-2 {
+    background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), rgba(192, 192, 192, 0.02));
+    border-left: 4px solid #c0c0c0;
+}
+
+.rank-2 .lb-rank,
+.rank-2 .lb-name,
+.rank-2 .lb-score {
+    color: #c0c0c0;
+    text-shadow: 0 0 8px rgba(192, 192, 192, 0.6);
+}
+
+.rank-3 {
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.02));
+    border-left: 4px solid #cd7f32;
+}
+
+.rank-3 .lb-rank,
+.rank-3 .lb-name,
+.rank-3 .lb-score {
+    color: #cd7f32;
+    text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
+}
+
+/* Current Player Styling */
+.current-player-row {
+    background: rgba(0, 255, 204, 0.1);
+    border-left: 4px solid #00ffcc;
+    box-shadow: inset 0 0 10px rgba(0, 255, 204, 0.2);
+    transform: scale(1.02);
+}
+
+.current-player-row .lb-name {
+    color: #00ffcc;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.you-badge {
+    background: #00ffcc;
+    color: #000;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 10px;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+/* True Rank Footer */
+#lb-true-rank-footer {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(0, 255, 204, 0.1);
+    border: 1px solid #00ffcc;
+    border-radius: 5px;
+    text-align: center;
+    color: #fff;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+    animation: fadeIn 0.5s ease-out;
+}
+
+#true-rank-val,
+#true-rank-score {
+    color: #00ffcc;
+    font-weight: bold;
+    text-shadow: 0 0 5px #00ffcc;
+}
+
+/* Mobile Stacking Optimization */
+@media (max-width: 480px) {
+    .lb-table-header {
+        display: none;
+    }
+
+    .leaderboard-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+        position: relative;
+    }
+
+    .leaderboard-item .lb-rank {
+        width: 100%;
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .leaderboard-item .lb-name {
+        width: 100%;
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    .leaderboard-item .lb-score,
+    .leaderboard-item .lb-mag {
+        width: auto;
+        display: inline-block;
+        font-size: 16px;
+        text-align: left;
+    }
+
+    .leaderboard-item .lb-mag::before {
+        content: " | ";
+        color: #555;
+    }
+
+    .stat-val {
+        font-size: 14px;
+    }
+
+    .stat-label {
+        font-size: 8px;
+    }
+
+    .lb-controls {
+        flex-wrap: wrap;
+    }
+}
+
+/* OLD RECORD HIGHLIGHT ANIMATIONS */
 
 .record-highlight {
     animation: recordPulse 1.5s infinite alternate;

@@ -186,25 +186,51 @@
                 <div class="leaderboard-header">
                     <h2 class="settings-title">GLOBAL LEADERBOARD</h2>
                 </div>
-                <div class="leaderboard-container">
-                    <ul id="leaderboard-list">
-                        <!-- Instantiated via JS -->
-                    </ul>
-                </div>
-            </div>
-        </div>
 
-        <!-- Leaderboard Screen -->
-        <div id="leaderboard-screen" class="hidden fullscreen-modal">
-            <div class="leaderboard-modal modal-content">
-                <button id="close-leaderboard-btn" class="close-btn">&times;</button>
-                <div class="leaderboard-header">
-                    <h2 class="settings-title">GLOBAL LEADERBOARD</h2>
+                <!-- Stats Summary Section -->
+                <div class="lb-stats-summary">
+                    <div class="stat-box">
+                        <span class="stat-label">TOTAL PLAYERS</span>
+                        <span id="stat-total-players" class="stat-val">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">MAX SCORE</span>
+                        <span id="stat-max-score" class="stat-val">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">MAX MAG</span>
+                        <span id="stat-max-mag" class="stat-val">0.0</span>
+                    </div>
+                    <div class="stat-box highlight-stat">
+                        <span class="stat-label">YOUR BEST</span>
+                        <span id="stat-your-best" class="stat-val">--</span>
+                    </div>
                 </div>
+
+                <!-- Sorting Filters -->
+                <div class="lb-controls">
+                    <button class="lb-sort-btn active" data-sort="score">SCORE</button>
+                    <button class="lb-sort-btn" data-sort="mag">MAG</button>
+                    <button class="lb-sort-btn" data-sort="recent">RECENT</button>
+                </div>
+
+                <!-- Leaderboard Table Container -->
                 <div class="leaderboard-container">
+                    <div class="lb-table-header">
+                        <span class="header-rank">RANK</span>
+                        <span class="header-name">USERNAME</span>
+                        <span class="header-score">SCORE</span>
+                        <span class="header-mag">MAG</span>
+                    </div>
                     <ul id="leaderboard-list">
                         <!-- Instantiated via JS -->
                     </ul>
+                </div>
+
+                <!-- True Rank Footer -->
+                <div id="lb-true-rank-footer" class="hidden">
+                    Your Rank: <span id="true-rank-val">#--</span> &nbsp;&mdash;&nbsp; <span id="true-rank-score">0
+                        pts</span>
                 </div>
             </div>
         </div>
