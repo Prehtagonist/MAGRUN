@@ -7,7 +7,9 @@ class LeaderboardManager {
         // Array of { username, score, mag }
         this.scores = [];
         this.currentSort = 'score'; // Default sort
-        this.loadScores();
+
+        // Wait for Firebase to initialize
+        setTimeout(() => this.fetchScores(), 500);
         this.setupListeners();
     }
 
@@ -30,65 +32,71 @@ class LeaderboardManager {
         });
     }
 
-    loadScores() {
-        const savedScores = localStorage.getItem('magrun_leaderboard');
-        if (savedScores) {
-            try {
-                this.scores = JSON.parse(savedScores);
-            } catch (e) {
-                console.warn("Failed to parse leaderboard data", e);
-                this.scores = [];
-            }
+    async fetchScores() {
+        if (!window.magrunDB) {
+            console.warn("Firestore not initialized. Retrying in 2 seconds...");
+            setTimeout(() => this.fetchScores(), 2000);
+            return;
+        }
+
+        try {
+            const snapshot = await window.magrunDB.collection('leaderboard').get();
+            this.scores = [];
+            snapshot.forEach(doc => {
+                this.scores.push(doc.data());
+            });
+            console.log("🔥 Loaded scores from Firestore:", this.scores.length);
+        } catch (error) {
+            console.error("Error fetching leaderboard from Firestore:", error);
         }
     }
 
-    updateLeaderboard(username, score, maxMag) {
-        console.log(`[Leaderboard] Username received: ${username}, Score received: ${score}`);
-
-        // 1. Get existing leaderboard data from storage
-        this.loadScores();
-        console.log(`[Leaderboard] Existing leaderboard before update:`, JSON.parse(JSON.stringify(this.scores)));
+    async updateLeaderboard(username, score, maxMag) {
+        console.log(`[Leaderboard] Attempting Global Sync for: ${username}, Score: ${score}`);
 
         if (!username || score <= 0) return false;
-
-        let isNewRecord = false;
-        // Check if user exists
-        const existingIndex = this.scores.findIndex(s => s.username === username);
-
-        if (existingIndex !== -1) {
-            // Update if strictly higher
-            if (score > this.scores[existingIndex].score) {
-                this.scores[existingIndex].score = score;
-                this.scores[existingIndex].mag = maxMag;
-                isNewRecord = true;
-            } else if (score === this.scores[existingIndex].score && maxMag > this.scores[existingIndex].mag) {
-                this.scores[existingIndex].mag = maxMag;
-                isNewRecord = true;
-            }
-        } else {
-            // New user
-            this.scores.push({
-                username: username,
-                score: score,
-                mag: maxMag,
-                date: Date.now() // Record timestamp for "Recent" sorting
-            });
-            isNewRecord = true;
+        if (!window.magrunDB) {
+            console.error("Cannot save to Leaderboard. Firestore is missing.");
+            return false;
         }
 
-        // Keep local storage sorted by actual highest score by default regardless of active filter
-        this.scores.sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return b.mag - a.mag;
-        });
+        let isNewRecord = false;
 
-        // Save using consistent storage key BEFORE slicing, so we have global data for True Rank
-        localStorage.setItem('magrun_leaderboard', JSON.stringify(this.scores));
-        console.log(`[Leaderboard] Updated leaderboard after save:`, this.scores);
+        try {
+            const userRef = window.magrunDB.collection('leaderboard').doc(username);
+            const doc = await userRef.get();
 
-        // Force UI Refresh
-        this.renderLeaderboard(isNewRecord ? username : null);
-        return isNewRecord;
+            if (doc.exists) {
+                const data = doc.data();
+                if (score > data.score) {
+                    await userRef.update({ score: score, mag: maxMag, date: Date.now() });
+                    isNewRecord = true;
+                } else if (score === data.score && maxMag > data.mag) {
+                    await userRef.update({ mag: maxMag, date: Date.now() });
+                    isNewRecord = true;
+                }
+            } else {
+                // New user
+                await userRef.set({
+                    username: username,
+                    score: score,
+                    mag: maxMag,
+                    date: Date.now()
+                });
+                isNewRecord = true;
+            }
+
+            // Sync local cache with new database truth
+            await this.fetchScores();
+
+            // Force UI Refresh
+            this.renderLeaderboard(isNewRecord ? username : null);
+            return isNewRecord;
+
+        } catch (error) {
+            console.error("Failed to sync score to Firestore:", error);
+            return false;
+        }
     }
 
     getSortedScores() {

@@ -3,7 +3,7 @@ class MagnitudeManager {
         this.gameManager = gameManager;
         this.currentMagnitude = 0;
         this.maxMagnitude = 9;
-        this.scoreThresholds = [0, 100, 250, 450, 700, 1000, 1400, 1800, 2300, 3000];
+        this.scoreThresholds = [0, 100, 250, 500, 1000, 2500, 3000, 3500, 4500, 6000];
         this.subtitles = {
             1: "Initiate",
             2: "Echo",
@@ -65,10 +65,10 @@ class MagnitudeManager {
     }
 
     checkScore(score) {
-        if (this.currentMagnitude >= this.maxMagnitude) return;
+        if (this.currentMagnitude >= this.maxMagnitude) return; // Hard Cap Protection
 
-        const nextThreshold = this.scoreThresholds[this.currentMagnitude + 1];
-        if (score >= nextThreshold) {
+        // Loop handles edge cases where score jumps multiple tiers instantly
+        while (this.currentMagnitude < this.maxMagnitude && score >= this.scoreThresholds[this.currentMagnitude + 1]) {
             this.levelUp();
         }
     }
@@ -167,6 +167,9 @@ class MagnitudeManager {
             this.levelUpBadge.classList.add('hidden');
         }
 
+        // Trigger visual escalation on environment
+        this.updateVisualEscalation();
+
         // Apply glow color styling
         this.levelUpMagText.style.color = glowColor;
         this.levelUpMagText.style.textShadow = `0 0 20px ${glowColor}, 0 0 40px ${glowColor}, 2px 2px 0 #000`;
@@ -175,17 +178,24 @@ class MagnitudeManager {
         this.levelUpSubText.style.textShadow = `0 0 10px ${glowColor}, 2px 2px 0 #000`;
         this.levelUpSubText.style.opacity = 0.8;
 
-        this.levelUpContainer.classList.remove('hidden-anim');
+        // Reset animation state to allow re-triggering if levels jump fast
+        this.levelUpContainer.classList.remove('show-anim', 'hidden-anim');
+
+        // Force reflow to restart CSS animation
+        void this.levelUpContainer.offsetWidth;
+
         this.levelUpContainer.classList.add('show-anim');
 
+        // Clear existing timeout if multiple level ups happen fast
+        if (this.fadeOutTimeout) {
+            clearTimeout(this.fadeOutTimeout);
+        }
+
         // Fade out after 2.5s to give time to see badge
-        setTimeout(() => {
+        this.fadeOutTimeout = setTimeout(() => {
             this.levelUpContainer.classList.remove('show-anim');
             this.levelUpContainer.classList.add('hidden-anim');
         }, 2800);
-
-        // Visual escalation
-        this.updateVisualEscalation();
     }
 
     updateVisualEscalation() {

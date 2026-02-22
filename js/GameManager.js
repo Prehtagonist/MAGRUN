@@ -182,7 +182,7 @@ class GameManager {
         }
     }
 
-    gameOver() {
+    async gameOver() {
         this.state = 'GAMEOVER';
         this.playerController.die();
         this.obstacleSpawner.stop();
@@ -195,7 +195,7 @@ class GameManager {
 
         // Save score to leaderboard
         if (this.loginManager && this.loginManager.username) {
-            const isNewRecord = this.leaderboardManager.updateLeaderboard(
+            const isNewRecord = await this.leaderboardManager.updateLeaderboard(
                 this.loginManager.username,
                 this.score,
                 this.magnitudeManager.currentMagnitude
