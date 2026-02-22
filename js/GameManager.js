@@ -272,48 +272,47 @@ class GameManager {
 
     checkCollisions() {
         const playerRect = this.playerController.getRect();
-        const playerLane = this.playerController.currentLaneIndex;
+
+        // Add fairness buffer. 
+        // Since the car is now 220px tall, we trim the visual rect to maintain fair gameplay.
+        const hitboxTrimY = 45; // Trim 45px off the visual front and back bounds
+        const hitboxTrimX = 15; // Horizontal leniency
+
+        const pLeft = playerRect.left + hitboxTrimX;
+        const pRight = playerRect.right - hitboxTrimX;
+        const pTop = playerRect.top + hitboxTrimY + this.collisionMargin;
+        const pBottom = playerRect.bottom - hitboxTrimY - this.collisionMargin;
 
         for (let i = this.obstacleSpawner.obstacles.length - 1; i >= 0; i--) {
             let obs = this.obstacleSpawner.obstacles[i];
+            const obsRect = obs.element.getBoundingClientRect();
 
-            // Check real lane index rather than visual position to ignore tremors
-            if (obs.laneIndex === playerLane) {
-                const obsRect = obs.element.getBoundingClientRect();
+            const oLeft = obsRect.left + this.collisionMargin;
+            const oRight = obsRect.right - this.collisionMargin;
+            const oTop = obsRect.top + this.collisionMargin;
+            const oBottom = obsRect.bottom - this.collisionMargin;
 
-                // Add fairness buffer. 
-                // Since the car is now 220px tall, we trim the visual rect to maintain fair gameplay.
-                const hitboxTrimY = 45; // Trim 45px off the visual front and back bounds
+            // True 2D Bounding Box Intersection
+            if (pLeft < oRight && pRight > oLeft && pTop < oBottom && pBottom > oTop) {
+                if (this.debugLogging) {
+                    console.log(`[COLLISION] Hit! Obs Type: ${obs.type}, Bounds: L:${pLeft} R:${pRight} T:${pTop} B:${pBottom}`);
+                }
 
-                const pTop = playerRect.top + hitboxTrimY + this.collisionMargin;
-                const pBottom = playerRect.bottom - hitboxTrimY - this.collisionMargin;
-                const oTop = obsRect.top + this.collisionMargin;
-                const oBottom = obsRect.bottom - this.collisionMargin;
-
-                if (pTop < oBottom && pBottom > oTop) {
-                    if (this.debugLogging) {
-                        console.log(`[COLLISION] Hit! Player: Lane ${playerLane}, Y: ${pTop}-${pBottom} | Obs Type: ${obs.type}, Y: ${oTop}-${oBottom}`);
-                    }
-
-                    if (obs.type === 'oil') {
-                        this.playerController.hitOilSlick();
+                if (obs.type === 'oil') {
+                    this.playerController.hitOilSlick();
+                } else {
+                    if (this.revivesRemaining > 0) {
+                        // Heathcliff Perk Triggered
+                        this.revivesRemaining--;
+                        this.triggerReviveState(obs);
                     } else {
-                        if (this.revivesRemaining > 0) {
-                            // Heathcliff Perk Triggered
-                            this.revivesRemaining--;
-                            this.triggerReviveState(obs);
-                        } else {
-                            this.gameOver();
-                            break;
-                        }
+                        this.gameOver();
+                        break;
                     }
                 }
             } else {
-                // Not in player lane. Check near miss for pressure relief
-                const obsRect = obs.element.getBoundingClientRect();
-                const oTop = obsRect.top;
-
-                // If obstacle just passed below player
+                // Not colliding. Check near miss for pressure relief
+                // If obstacle just passed below player vertically
                 if (oTop > playerRect.bottom && !obs.passedPlayerSafe) {
                     obs.passedPlayerSafe = true; // custom flag
                     if (this.pressureManager) {

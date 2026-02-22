@@ -138,10 +138,6 @@ class MagnitudeManager {
             this.screenFlash.style.opacity = "1";
         }, 200);
 
-        // Camera shake effect
-        this.gameContainer.classList.add('shake-active');
-        setTimeout(() => this.gameContainer.classList.remove('shake-active'), 500);
-
         // Play level up sound & update audio engine
         if (this.gameManager.audioManager) {
             this.gameManager.audioManager.playLevelUpBoom();
