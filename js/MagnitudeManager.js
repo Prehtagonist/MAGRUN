@@ -3,7 +3,7 @@ class MagnitudeManager {
         this.gameManager = gameManager;
         this.currentMagnitude = 0;
         this.maxMagnitude = 9;
-        this.scoreThresholds = [0, 100, 250, 500, 1000, 2500, 3000, 3500, 4500, 6000];
+        this.scoreThresholds = [0, 100, 250, 500, 1000, 2000, 3000, 3500, 4500, 6000];
         this.subtitles = {
             1: "Initiate",
             2: "Echo",
@@ -127,16 +127,6 @@ class MagnitudeManager {
         // Red screen flash
         const glowColor = this.magColors[this.currentMagnitude] || "#ff0000";
         const subtitle = this.subtitles[this.currentMagnitude] || "Instability Rising";
-
-        // Screen flash with tinted MAG color
-        this.screenFlash.style.background = glowColor;
-        this.screenFlash.style.opacity = "0.3";
-        this.screenFlash.classList.add('flash-active');
-        setTimeout(() => {
-            this.screenFlash.classList.remove('flash-active');
-            this.screenFlash.style.background = 'transparent';
-            this.screenFlash.style.opacity = "1";
-        }, 200);
 
         // Play level up sound & update audio engine
         if (this.gameManager.audioManager) {
