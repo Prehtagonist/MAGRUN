@@ -295,20 +295,12 @@ class GameManager {
         for (let i = this.obstacleSpawner.obstacles.length - 1; i >= 0; i--) {
             let obs = this.obstacleSpawner.obstacles[i];
 
-            // Get computed style to ensure moving obstacles track their exact mid-transition visual position
-            const computedStyle = window.getComputedStyle(obs.element);
-            const matrix = new DOMMatrix(computedStyle.transform);
-            const leftOffset = parseFloat(computedStyle.left) || 0;
-            const topOffset = parseFloat(computedStyle.top) || 0;
+            const obsRect = obs.element.getBoundingClientRect();
 
-            // Reconstruct the true visual bounding box based on width/height and transform
-            const width = obs.element.offsetWidth || 50;
-            const height = obs.element.offsetHeight || 50;
-
-            const oLeft = leftOffset + matrix.m41 + this.collisionMargin;
-            const oRight = oLeft + width - (this.collisionMargin * 2);
-            const oTop = topOffset + matrix.m42 + this.collisionMargin;
-            const oBottom = oTop + height - (this.collisionMargin * 2);
+            const oLeft = obsRect.left + this.collisionMargin;
+            const oRight = obsRect.right - this.collisionMargin;
+            const oTop = obsRect.top + this.collisionMargin;
+            const oBottom = obsRect.bottom - this.collisionMargin;
 
             // True 2D Bounding Box Intersection
             if (pLeft < oRight && pRight > oLeft && pTop < oBottom && pBottom > oTop) {

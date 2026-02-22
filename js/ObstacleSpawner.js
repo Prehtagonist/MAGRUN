@@ -15,7 +15,6 @@ class ObstacleSpawner {
     }
 
     start() {
-        this.spawnObstacle();
         if (this.spawnTimer) clearInterval(this.spawnTimer);
         this.spawnTimer = setInterval(() => this.spawnObstacle(), this.spawnRate);
     }
@@ -41,7 +40,7 @@ class ObstacleSpawner {
 
         if (mag >= 3) types.push({ type: 'vehicle', weight: 40 + mag * 5 });
         if (mag >= 5) types.push({ type: 'oil', weight: 30 + mag * 5 });
-        if (mag >= 6) types.push({ type: 'moving', weight: 20 + mag * 10 });
+        if (mag >= 7) types.push({ type: 'moving', weight: 20 + mag * 10 });
         if (mag >= 8) types.push({ type: 'lava', weight: 10 + mag * 15 });
 
         // Normalize weights
@@ -205,7 +204,7 @@ class ObstacleSpawner {
 
             // Moving obstacle logic
             if (obs.type === 'moving' && !obs.hasMoved && currentTime - obs.spawnTime > 1000) {
-                // Check if Y is safely above 60% of screen height
+                // Check if Y is safely above player
                 if (obs.yPos < containerHeight * 0.6) {
                     obs.hasMoved = true;
                     // Move towards center or random adjacent
@@ -216,12 +215,8 @@ class ObstacleSpawner {
 
                     obs.laneIndex = newLane;
                     const nx = this.lanes.getLanePosition(newLane);
-                    obs.element.style.transition = 'left 0.3s ease-in-out'; // Add glide animation
+                    obs.element.style.transition = 'left 0.3s ease-in-out';
                     obs.element.style.left = `${nx}px`;
-
-                    if (this.gameManager.debugLogging) {
-                        console.log(`[SHIFT] Moving to lane ${newLane} at Y = ${obs.yPos}`);
-                    }
                 }
             }
 

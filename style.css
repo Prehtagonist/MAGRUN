@@ -1833,3 +1833,76 @@ input:checked+.slider:before {
         transform: scale(1);
     }
 }
+
+/* --- DARK OBSTACLE EVOLUTION STYLES --- */
+.obstacle {
+    position: absolute;
+    border-radius: 5px;
+    z-index: 15;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.obs-rock {
+    width: 60px;
+    height: 60px;
+    background-image: url('assets/obstacles/rock.png');
+    border-radius: 50%;
+}
+
+.obs-vehicle {
+    width: 80px;
+    height: 120px;
+    background-image: url('assets/obstacles/vehicle.png');
+    border-radius: 10px;
+}
+
+.obs-oil {
+    width: 90px;
+    height: 90px;
+    background-image: url('assets/obstacles/oil.png');
+    border-radius: 50%;
+    opacity: 0.9;
+}
+
+.obs-moving {
+    width: 70px;
+    height: 70px;
+    background-image: url('assets/obstacles/moving.png');
+    border-radius: 50%;
+    animation: movingPulse 0.5s infinite alternate;
+}
+
+.obs-lava {
+    width: 140px;
+    height: 200px;
+    background-image: url('assets/obstacles/lava.png');
+    border-radius: 10px;
+    box-shadow: 0 0 30px #ff0000, inset 0 0 20px #ffff00;
+    animation: lavaGlow 1s infinite alternate;
+}
+
+@keyframes lavaGlow {
+    from {
+        box-shadow: 0 0 20px #ff0000, inset 0 0 10px #ffff00;
+    }
+
+    to {
+        box-shadow: 0 0 50px #ff3c00, inset 0 0 30px #ffff00;
+    }
+}
+
+@keyframes movingPulse {
+    from {
+        transform: translateX(-50%) scale(1);
+        box-shadow: 0 0 10px #aa00aa;
+    }
+
+    to {
+        transform: translateX(-50%) scale(1.1);
+        box-shadow: 0 0 25px #ff00ff;
+    }
+}

@@ -3,7 +3,7 @@ class MagnitudeManager {
         this.gameManager = gameManager;
         this.currentMagnitude = 0;
         this.maxMagnitude = 9;
-        this.scoreThresholds = [0, 100, 250, 500, 1000, 2000, 3000, 3500, 4500, 6000];
+        this.scoreThresholds = [0, 100, 350, 650, 1050, 1500, 2500, 3500, 4500, 6000];
         this.subtitles = {
             1: "Initiate",
             2: "Echo",
