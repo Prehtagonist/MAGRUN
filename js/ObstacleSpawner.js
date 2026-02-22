@@ -202,23 +202,6 @@ class ObstacleSpawner {
             let obs = this.obstacles[i];
             obs.yPos += this.obstacleSpeed * dt;
 
-            // Moving obstacle logic
-            if (obs.type === 'moving' && !obs.hasMoved && currentTime - obs.spawnTime > 1000) {
-                // Check if Y is safely above player
-                if (obs.yPos < containerHeight * 0.6) {
-                    obs.hasMoved = true;
-                    // Move towards center or random adjacent
-                    let newLane;
-                    if (obs.laneIndex === 0) newLane = 1;
-                    else if (obs.laneIndex === 2) newLane = 1;
-                    else newLane = Math.random() > 0.5 ? 0 : 2;
-
-                    obs.laneIndex = newLane;
-                    const nx = this.lanes.getLanePosition(newLane);
-                    obs.element.style.transition = 'left 0.3s ease-in-out';
-                    obs.element.style.left = `${nx}px`;
-                }
-            }
 
             obs.element.style.top = `${obs.yPos}px`;
 
