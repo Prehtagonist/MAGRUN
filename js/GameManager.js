@@ -145,7 +145,11 @@ class GameManager {
         this.threatPatternManager.reset();
         this.pressureManager.reset();
         this.cinematicManager.reset();
-        this.audioManager.reset();
+
+        this.audioManager.stopAll();
+        if (this.audioManager.initialized && this.audioManager.musicEnabled) {
+            this.audioManager.startBaseAmbience();
+        }
 
         // Trigger gameplay music crossover
         this.audioManager.pauseBackgroundMusic();

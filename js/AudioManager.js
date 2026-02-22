@@ -113,7 +113,11 @@ class AudioManager {
 
         this.isMusicPlaying = true;
         this.bgAudioElement.play().then(() => {
-            this.fadeMusicVolume(this.bgAudioElement, 0.6, 1.5);
+            if (this.isMusicPlaying) {
+                this.fadeMusicVolume(this.bgAudioElement, 0.6, 1.5);
+            } else {
+                this.bgAudioElement.pause();
+            }
         }).catch(e => {
             console.warn("Autoplay blocked or file not found.", e);
             this.isMusicPlaying = false;
@@ -136,7 +140,12 @@ class AudioManager {
 
         this.isGameplayMusicPlaying = true;
         this.gameplayAudioElement.play().then(() => {
-            this.fadeMusicVolume(this.gameplayAudioElement, 0.8, 1.5);
+            if (this.isGameplayMusicPlaying) {
+                this.fadeMusicVolume(this.gameplayAudioElement, 0.8, 1.5);
+            } else {
+                this.gameplayAudioElement.pause();
+                this.gameplayAudioElement.currentTime = 0;
+            }
         }).catch(e => {
             console.warn("Gameplay music blocked or missing (assets/audio/gameplay-music.mp3)", e);
             this.isGameplayMusicPlaying = false;
