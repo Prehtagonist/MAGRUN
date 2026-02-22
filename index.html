@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAGRUN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="game-container">
+        <div id="dark-overlay" class="visual-overlay"></div>
+        <div id="red-overlay" class="visual-overlay"></div>
+        <div id="vignette-overlay" class="visual-overlay"></div>
+        <div id="screen-flash" class="visual-overlay"></div>
+        <div id="particles-overlay" class="visual-overlay"></div>
+
+        <div id="level-up-container" class="hidden-anim">
+            <img id="level-up-badge" src="assets/mag-badges/mag1.png" alt="MAG Badge" class="hidden">
+            <h2 id="level-up-mag">MAG 1</h2>
+            <p id="level-up-sub">Initiate</p>
+        </div>
+
+        <div id="cinematic-collapse-container" class="hidden-anim">
+            <h2 class="glitch-text" data-text="SEISMIC COLLAPSE">SEISMIC COLLAPSE</h2>
+            <p>SURVIVE THE IMPOSSIBLE</p>
+        </div>
+
+        <div id="ui-layer">
+            <div id="left-ui">
+                <div id="magnitude-display">
+                    <img id="hud-mag-badge" src="" alt="Badge" class="hidden">
+                    <span>MAG 0</span>
+                </div>
+                <div id="pressure-container">
+                    <span class="pressure-label">SEISMIC PRESSURE</span>
+                    <div class="pressure-bar-bg">
+                        <div id="pressure-fill"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="score-display">0</div>
+        </div>
+
+        <div id="road-container">
+            <div id="cracks-overlay" class="visual-overlay"></div>
+            <div id="lane-highlights">
+                <div class="lane-highlight" id="highlight-0"></div>
+                <div class="lane-highlight" id="highlight-1"></div>
+                <div class="lane-highlight" id="highlight-2"></div>
+            </div>
+            <div class="road-sprite road-sprite-1">
+                <div class="lane-divider left"></div>
+                <div class="lane-divider right"></div>
+            </div>
+            <div class="road-sprite road-sprite-2">
+                <div class="lane-divider left"></div>
+                <div class="lane-divider right"></div>
+            </div>
+        </div>
+
+        <div id="entities-layer">
+            <div id="player">
+                <div id="player-head"></div>
+            </div>
+        </div>
+
+        <div id="splash-screen" class="screen hidden">
+            <h1 class="splash-logo">MAGRUN: <br><span class="splash-sub">SEISMIC COLLAPSE</span></h1>
+        </div>
+
+        <!-- Login / Identity Screen -->
+        <div id="login-screen" class="hidden">
+            <div class="branding">
+                <img src="assets/branding/magrun-logo.png" alt="MAGRUN Logo" id="official-logo">
+                <h1>MAGRUN</h1>
+            </div>
+            <div class="login-card">
+                <h2>Enter Name</h2>
+                <input type="text" id="username-input" placeholder="Max 15 chars" maxlength="15" autocomplete="off"
+                    spellcheck="false" />
+                <button id="btn-login-start" class="btn">Lets RUN</button>
+            </div>
+        </div>
+
+        <div id="main-menu" class="screen hidden">
+            <div class="menu-top-right">
+                <div class="player-avatar" style="background-size: cover; background-position: center;"></div>
+                <div class="player-name">GUEST_404</div>
+            </div>
+            <div class="menu-bottom-left">
+                <span class="version-text">v1.1.0 SEISMIC</span>
+            </div>
+
+            <div class="menu-buttons-container">
+                <button class="menu-btn" id="btn-play">PLAY</button>
+                <button class="menu-btn" id="btn-car">GARAGE / CARS</button>
+                <button class="menu-btn" id="btn-character">CHARACTER SELECT</button>
+                <button class="menu-btn" id="btn-gallery" onclick="window.open('gallery.html', '_blank')">WEB
+                    GALLERY</button>
+                <button class="menu-btn" id="btn-leaderboard">LEADERBOARD</button>
+                <button class="menu-btn" id="btn-settings">SETTINGS</button>
+            </div>
+        </div>
+
+        <div id="settings-screen" class="screen hidden">
+            <div class="settings-modal flex-col">
+                <button id="btn-close-settings" class="close-btn">&times;</button>
+
+                <h2 class="settings-title">GAMEPLAY SETTINGS</h2>
+                <div class="difficulty-options">
+                    <button class="diff-btn" data-diff="easy">
+                        <h3>EASY</h3>
+                        <p>Slower obstacles<br>Lower frequency</p>
+                    </button>
+                    <button class="diff-btn active" data-diff="medium">
+                        <h3>MEDIUM</h3>
+                        <p>Balanced gameplay<br>Standard frequency</p>
+                    </button>
+                    <button class="diff-btn" data-diff="hard">
+                        <h3>HARD</h3>
+                        <p>Faster obstacles<br>High frequency</p>
+                    </button>
+                </div>
+
+                <h2 class="settings-title">AUDIO SETTINGS</h2>
+                <div class="audio-toggles">
+                    <div class="toggle-row">
+                        <span>MUSIC</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-music" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <span>SOUND EFFECTS</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-sfx" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row master-mute-row">
+                        <span>MUTE ALL</span>
+                        <label class="switch mute-switch">
+                            <input type="checkbox" id="toggle-mute">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="car-select-screen" class="screen hidden">
+            <h2>GARAGE</h2>
+            <div id="car-carousel" style="display: flex; gap: 20px; justify-content: center; margin-bottom: 30px;">
+                <!-- dynamic from JS -->
+            </div>
+            <button class="menu-btn" id="btn-confirm-car">CONFIRM</button>
+        </div>
+
+        <div id="character-select-screen" class="screen hidden">
+            <h2>SELECT OPERATIVE</h2>
+            <div id="character-carousel">
+                <!-- dynamic from JS -->
+            </div>
+            <button class="menu-btn" id="btn-confirm-char">CONFIRM</button>
+        </div>
+
+        <div id="game-over-screen" class="screen hidden">
+            <h1>Game Over</h1>
+            <div class="stats-box">
+                <p>FINAL MAG: <span id="final-mag">0</span></p>
+                <p>FINAL SCORE: <span id="final-score">0</span></p>
+            </div>
+            <div class="menu-buttons-container">
+                <button id="restart-button" class="menu-btn">RESTART</button>
+                <button id="return-menu-button" class="menu-btn">MAIN MENU</button>
+            </div>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div id="leaderboard-screen" class="hidden fullscreen-modal">
+            <div class="leaderboard-modal modal-content">
+                <button id="close-leaderboard-btn" class="close-btn">&times;</button>
+                <div class="leaderboard-header">
+                    <h2 class="settings-title">GLOBAL LEADERBOARD</h2>
+                </div>
+                <div class="leaderboard-container">
+                    <ul id="leaderboard-list">
+                        <!-- Instantiated via JS -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div id="leaderboard-screen" class="hidden fullscreen-modal">
+            <div class="leaderboard-modal modal-content">
+                <button id="close-leaderboard-btn" class="close-btn">&times;</button>
+                <div class="leaderboard-header">
+                    <h2 class="settings-title">GLOBAL LEADERBOARD</h2>
+                </div>
+                <div class="leaderboard-container">
+                    <ul id="leaderboard-list">
+                        <!-- Instantiated via JS -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/LaneManager.js"></script>
+    <script src="js/PlayerController.js"></script>
+    <script src="js/ObstacleSpawner.js"></script>
+    <script src="js/SeismicTremorManager.js"></script>
+    <script src="js/ThreatPatternManager.js"></script>
+    <script src="js/MagnitudeManager.js"></script>
+    <script src="js/PressureManager.js"></script>
+    <script src="js/AudioManager.js"></script>
+    <script src="js/CinematicManager.js"></script>
+    <script src="js/UIManager.js"></script>
+    <script src="js/SplashScreenManager.js"></script>
+    <script src="js/CharacterData.js"></script>
+    <script src="js/CharacterSelectionManager.js"></script>
+    <script src="js/CarData.js"></script>
+    <script src="js/CarSelectionManager.js"></script>
+    <script src="js/MenuManager.js"></script>
+    <script src="js/SettingsManager.js"></script>
+    <script src="js/UIAnimationsManager.js"></script>
+    <script src="js/LoginManager.js"></script>
+    <script src="js/LeaderboardManager.js"></script>
+    <script src="js/GameManager.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

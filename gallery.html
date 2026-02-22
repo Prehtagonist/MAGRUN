@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAGRUN: Character Gallery</title>
+    <link rel="stylesheet" href="gallery.css">
+</head>
+
+<body>
+    <div class="gallery-container">
+        <header>
+            <h1>MAGRUN <br><span class="highlight">SHOWCASE GALLERY</span></h1>
+            <p>Meet the Operatives and Vehicles surviving the Seismic Collapse.</p>
+            <a href="index.html" class="btn-back">RETURN TO GAME</a>
+        </header>
+
+        <h2 class="section-heading">OPERATIVES</h2>
+        <main id="gallery-grid">
+            <!-- Dynamic character injection -->
+        </main>
+
+        <h2 class="section-heading" style="margin-top: 60px;">THE GARAGE</h2>
+        <main id="car-gallery-grid" class="gallery-grid">
+            <!-- Dynamic car injection -->
+        </main>
+    </div>
+
+    <!-- Data sources -->
+    <script src="js/CharacterData.js"></script>
+    <script src="js/CarData.js"></script>
+
+    <script>
+        const charGrid = document.getElementById('gallery-grid');
+        const carGrid = document.getElementById('car-gallery-grid');
+
+        CharacterData.forEach((char, index) => {
+            const card = document.createElement('div');
+            card.className = 'gallery-card';
+            card.style.animationDelay = `${index * 0.1}s`;
+
+            card.innerHTML = `
+                <div class="card-image-box">
+                    <img src="${char.image}" alt="${char.name}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'200\\' fill=\\'%23333\\'><rect width=\\'200\\' height=\\'200\\'/></svg>'">
+                </div>
+                <div class="card-info">
+                    <h2>${char.name}</h2>
+                    <p class="role">${char.description}</p>
+                    <div class="perk-badge">PERK: ${char.perk}</div>
+                </div>
+            `;
+
+            charGrid.appendChild(card);
+        });
+
+        CarData.forEach((car, index) => {
+            const card = document.createElement('div');
+            card.className = 'gallery-card car-showcase-card';
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.borderColor = car.glowColor;
+
+            card.innerHTML = `
+                <div class="card-image-box" style="height: 200px; padding: 20px; background: transparent; border-bottom: none;">
+                    <img src="${car.image}" alt="${car.name}" style="object-fit: contain; filter: drop-shadow(0 0 15px ${car.glowColor}); margin-top:20px;">
+                </div>
+                <div class="card-info">
+                    <h2>${car.name}</h2>
+                    <p class="role">${car.description}</p>
+                    <div class="perk-badge" style="color: ${car.glowColor}; border-color: ${car.glowColor}; box-shadow: 0 0 10px ${car.glowColor};">TRAIT: ${car.trait}</div>
+                </div>
+            `;
+
+            carGrid.appendChild(card);
+        });
+    </script>
+</body>
+
+</html>
