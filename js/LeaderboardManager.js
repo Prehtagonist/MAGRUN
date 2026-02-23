@@ -186,10 +186,10 @@ class LeaderboardManager {
             }
         }
 
-        // Display True Rank footer if not in top 10
+        // Display True Rank footer if not in top 50
         const footer = document.getElementById('lb-true-rank-footer');
         if (footer) { // Added null check for footer
-            if (playerTrueRank > 10 && playerTrueData) {
+            if (playerTrueRank > 50 && playerTrueData) {
                 footer.classList.remove('hidden');
                 document.getElementById('true-rank-val').innerText = `#${playerTrueRank}`;
                 document.getElementById('true-rank-score').innerText = `${playerTrueData.score} pts`;
@@ -200,9 +200,9 @@ class LeaderboardManager {
 
 
         // Slice for render
-        const top10 = sortedData.slice(0, 10);
+        const top50 = sortedData.slice(0, 50);
 
-        top10.forEach((entry, index) => {
+        top50.forEach((entry, index) => {
             const li = document.createElement('li');
             li.classList.add('leaderboard-item');
 
