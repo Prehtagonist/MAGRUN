@@ -30,6 +30,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
+    height: 100%;
     padding: 20px;
     box-sizing: border-box;
     display: flex;
@@ -76,6 +77,47 @@ body {
 
 .score-pop {
     transform: scale(1.1);
+}
+
+/* --- HEALTH BAR --- */
+#health-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+    z-index: 20;
+}
+
+#health-label {
+    font-size: 14px;
+    color: #ff3333;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.8), 2px 2px 0 #000;
+}
+
+#health-bar-track {
+    width: 100%;
+    height: 12px;
+    background: rgba(30, 0, 0, 0.8);
+    border: 2px solid #550000;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+#health-bar-fill {
+    width: 100%;
+    height: 100%;
+    background-color: #00ff00;
+    /* Starts green */
+    box-shadow: 0 0 10px #00ff00;
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease;
 }
 
 #pressure-container {
@@ -472,6 +514,19 @@ p {
     color: #ffaa00;
     text-shadow: 0 0 5px #ff5500;
     letter-spacing: 1px;
+}
+
+.menu-bottom-right {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    text-align: right;
+    font-size: 10px;
+    color: #ffaa00;
+    text-shadow: 0 0 5px #ff5500;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    z-index: 10;
 }
 
 .menu-buttons-container {

@@ -7,6 +7,9 @@ class UIManager {
         this.pressureContainer = document.getElementById('pressure-container');
         this.pressureFill = document.getElementById('pressure-fill');
 
+        this.healthContainer = document.getElementById('health-container');
+        this.healthBarFill = document.getElementById('health-bar-fill');
+
         this.finalMagText = document.getElementById('final-mag');
         this.finalScoreText = document.getElementById('final-score');
 
@@ -17,8 +20,6 @@ class UIManager {
         const flooredScore = Math.floor(score);
         if (flooredScore > this.lastScore) {
             this.scoreDisplay.innerText = flooredScore;
-            this.scoreDisplay.classList.add('score-pop');
-            setTimeout(() => this.scoreDisplay.classList.remove('score-pop'), 100);
             this.lastScore = flooredScore;
         }
     }
@@ -61,10 +62,43 @@ class UIManager {
         }
     }
 
+    updateHealthBar(currentHealth, maxHealth) {
+        if (!this.healthBarFill) return;
+
+        const pct = Math.max(0, (currentHealth / maxHealth) * 100);
+        this.healthBarFill.style.width = `${pct}%`;
+
+        if (pct > 66) {
+            this.healthBarFill.style.backgroundColor = '#00ff00';
+            this.healthBarFill.style.boxShadow = '0 0 10px #00ff00';
+        } else if (pct > 33) {
+            this.healthBarFill.style.backgroundColor = '#ffff00';
+            this.healthBarFill.style.boxShadow = '0 0 10px #ffff00';
+        } else {
+            this.healthBarFill.style.backgroundColor = '#ff0000';
+            this.healthBarFill.style.boxShadow = '0 0 10px #ff0000';
+        }
+    }
+
+    showHealthBar() {
+        if (this.healthContainer) {
+            this.healthContainer.classList.remove('hidden');
+        }
+    }
+
+    hideHealthBar() {
+        if (this.healthContainer) {
+            this.healthContainer.classList.add('hidden');
+        }
+    }
+
     reset() {
         this.lastScore = 0;
         this.scoreDisplay.innerText = "0";
         this.magnitudeDisplay.innerText = "MAG 0";
         this.updatePressureBar(0, 0);
+        this.updateHealthBar(3, 3);
+        // By default on reset (which happens at start), show it. Wait, reset is called at start.
+        this.showHealthBar();
     }
 }

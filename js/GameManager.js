@@ -92,6 +92,7 @@ class GameManager {
         this.score = 0;
         this.survivalTime = 0;
         this.uiManager.reset();
+        this.uiManager.hideHealthBar();
         this.playerController.reset();
         this.obstacleSpawner.clearAll();
         this.magnitudeManager.reset();
@@ -132,6 +133,10 @@ class GameManager {
         this.state = 'PLAYING';
         this.score = 0;
         this.survivalTime = 0;
+
+        this.maxHealth = 3;
+        this.currentHealth = 3;
+        this.isInvulnerable = false;
 
         this.uiManager.reset();
 
@@ -311,13 +316,8 @@ class GameManager {
                 if (obs.type === 'oil') {
                     this.playerController.hitOilSlick();
                 } else {
-                    if (this.revivesRemaining > 0) {
-                        // Heathcliff Perk Triggered
-                        this.revivesRemaining--;
-                        this.triggerReviveState(obs);
-                    } else {
-                        this.gameOver();
-                        break;
+                    if (!this.isInvulnerable) {
+                        this.takeDamage(obs, i);
                     }
                 }
             } else {
@@ -330,6 +330,42 @@ class GameManager {
                     }
                 }
             }
+        }
+    }
+
+    takeDamage(obs, index) {
+        if (this.revivesRemaining > 0) {
+            this.revivesRemaining--;
+            this.triggerReviveState(obs);
+            return;
+        }
+
+        this.currentHealth--;
+        this.uiManager.updateHealthBar(this.currentHealth, this.maxHealth);
+
+        if (this.currentHealth <= 0) {
+            this.gameOver();
+        } else {
+            // I-Frames + Visual Hit Effects
+            this.isInvulnerable = true;
+            if (this.audioManager) this.audioManager.playCrashSound();
+
+            this.container.classList.add('flash-active');
+            this.container.classList.add('shake-active');
+
+            // Destroy the obstacle that was hit so player can drive through
+            obs.element.remove();
+            this.obstacleSpawner.obstacles.splice(index, 1);
+
+            setTimeout(() => {
+                this.container.classList.remove('flash-active');
+                this.container.classList.remove('shake-active');
+            }, 500);
+
+            // 1.5 second invulnerability buffer
+            setTimeout(() => {
+                this.isInvulnerable = false;
+            }, 1500);
         }
     }
 
