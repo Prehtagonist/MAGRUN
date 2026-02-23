@@ -82,31 +82,30 @@ body {
 /* --- HEALTH BAR --- */
 #health-container {
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 60px;
+    right: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 60%;
+    align-items: flex-end;
+    width: 80px;
     z-index: 20;
 }
 
 #health-label {
-    font-size: 14px;
+    font-size: 10px;
     color: #ff3333;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     text-shadow: 0 0 5px rgba(255, 0, 0, 0.8), 2px 2px 0 #000;
 }
 
 #health-bar-track {
     width: 100%;
-    height: 12px;
+    height: 8px;
     background: rgba(30, 0, 0, 0.8);
-    border: 2px solid #550000;
-    border-radius: 6px;
+    border: 1px solid #550000;
+    border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 }
